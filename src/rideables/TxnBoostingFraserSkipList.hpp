@@ -187,7 +187,7 @@ public:
     int recover(bool simulated){
         // TODO(Wentao): consider separate transient Medley from class
         // Recoverable, maybe Composable, and derive Recoverable from
-        // Composable, so txnMontage's support to transient and
+        // Composable, so txMontage's support to transient and
         // persistent structures is more decoupled.
         assert(0&&"TxnBoostingTxnBoostingFraserSkipList isn't recoverable!");
         return 0;

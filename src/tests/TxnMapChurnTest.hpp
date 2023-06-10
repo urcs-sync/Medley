@@ -74,7 +74,7 @@ public:
 	}
 
 	void allocRideable(GlobalTestConfig* gtc){
-		// set up epoch system for txnMontage ds
+		// set up epoch system for txMontage ds
 		if(gtc->checkEnv("Liveness")){
             string env_liveness = gtc->getEnv("Liveness");
             if(env_liveness == "Nonblocking"){

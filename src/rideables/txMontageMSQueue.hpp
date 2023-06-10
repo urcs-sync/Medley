@@ -12,7 +12,7 @@
 #include "Recoverable.hpp"
 
 template<typename T>
-class MontageMSQueue : public RQueue<T>, public Recoverable{
+class txMontageMSQueue : public RQueue<T>, public Recoverable{
 public:
     class Payload : public pds::PBlk{
         GENERATE_FIELD(T, val, Payload);
@@ -26,13 +26,13 @@ public:
 
 private:
     struct Node{
-        MontageMSQueue* ds = nullptr;
+        txMontageMSQueue* ds = nullptr;
         pds::atomic_lin_var<Node*> next;
         Payload* payload;
 
         Node(): next(nullptr), payload(nullptr){}
-        Node(MontageMSQueue* ds_): ds(ds_), next(nullptr), payload(nullptr){}
-        Node(MontageMSQueue* ds_, T v): ds(ds_), next(nullptr), payload(ds_->pnew<Payload>(v)){
+        Node(txMontageMSQueue* ds_): ds(ds_), next(nullptr), payload(nullptr){}
+        Node(txMontageMSQueue* ds_, T v): ds(ds_), next(nullptr), payload(ds_->pnew<Payload>(v)){
             // assert(ds->epochs[EpochSys::tid].ui == NULL_EPOCH);
         }
 
@@ -58,7 +58,7 @@ private:
     // RCUTracker tracker;
 
 public:
-    MontageMSQueue(GlobalTestConfig* gtc): 
+    txMontageMSQueue(GlobalTestConfig* gtc): 
         Recoverable(gtc), global_sn(0), head(nullptr), tail(nullptr)
         // , tracker(gtc->task_num, 100, 1000, true)
     {
@@ -73,18 +73,18 @@ public:
     }
 
     int recover(bool simulated){
-        errexit("recover of MontageMSQueue not implemented.");
+        errexit("recover of txMontageMSQueue not implemented.");
         return 0;
     }
 
-    ~MontageMSQueue(){};
+    ~txMontageMSQueue(){};
 
     void enqueue(T val, int tid);
     optional<T> dequeue(int tid);
 };
 
 template<typename T>
-void MontageMSQueue<T>::enqueue(T v, int tid){
+void txMontageMSQueue<T>::enqueue(T v, int tid){
     TX_OP_SEPARATOR();
 
     Node* new_node = tnew<Node>(this,v);
@@ -134,7 +134,7 @@ void MontageMSQueue<T>::enqueue(T v, int tid){
 }
 
 template<typename T>
-optional<T> MontageMSQueue<T>::dequeue(int tid){
+optional<T> txMontageMSQueue<T>::dequeue(int tid){
     TX_OP_SEPARATOR();
 
     optional<T> res = {};
@@ -183,9 +183,9 @@ optional<T> MontageMSQueue<T>::dequeue(int tid){
 }
 
 template <class T> 
-class MontageMSQueueFactory : public RideableFactory{
+class txMontageMSQueueFactory : public RideableFactory{
     Rideable* build(GlobalTestConfig* gtc){
-        return new MontageMSQueue<T>(gtc);
+        return new txMontageMSQueue<T>(gtc);
     }
 };
 
@@ -193,7 +193,7 @@ class MontageMSQueueFactory : public RideableFactory{
 #include <string>
 #include "InPlaceString.hpp"
 template <>
-class MontageMSQueue<std::string>::Payload : public pds::PBlk{
+class txMontageMSQueue<std::string>::Payload : public pds::PBlk{
     GENERATE_FIELD(pds::InPlaceString<TESTS_VAL_SIZE>, val, Payload);
     GENERATE_FIELD(uint64_t, sn, Payload); 
 

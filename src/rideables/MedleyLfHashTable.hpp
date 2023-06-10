@@ -2,7 +2,7 @@
 #define MEDLEY_LF_HASHTABLE_P
 
 // This is a transient version of txMontageLfHashTable, i.e.,
-// transactional lf hash table built with txnMontage but without
+// transactional lf hash table built with txMontage but without
 // persistent payloads.
 
 #include <stdio.h>
@@ -93,7 +93,7 @@ public:
     int recover(bool simulated){
         // TODO(Wentao): consider separate transient Medley from class
         // Recoverable, maybe Composable, and derive Recoverable from
-        // Composable, so txnMontage's support to transient and
+        // Composable, so txMontage's support to transient and
         // persistent structures is more decoupled.
         assert(0&&"MedleyLfHashTable isn't recoverable!");
         return 0;
