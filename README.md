@@ -1,6 +1,6 @@
 # Medley and txMontage
 
-Based on the new NonBlock Transaction Composition (NBTC) methodology,
+Based on the new NonBlocking Transaction Composition (NBTC) methodology,
 Medley and txMontage are the two general systems for building
 transactional nonblocking data
 structures for both transient memory and persistent memory,
