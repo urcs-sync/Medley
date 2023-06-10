@@ -1,0 +1,9 @@
+*.test
+*.a
+*.o
+*.d
+*.out
+bin
+obj
+*.swp
+*.DS_Store
