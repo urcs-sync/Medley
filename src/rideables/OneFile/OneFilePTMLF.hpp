@@ -53,9 +53,33 @@
 // #else
 // #error "You must define what PWB is. Choose PWB_IS_CLFLUSHOPT if you don't know what your CPU is capable of"
 // #endif
-#define PWB(addr)              persist_func::clwb(addr)
-#define PFENCE()               persist_func::sfence()
-#define PSYNC()                persist_func::sfence()
+#ifdef SHM_SIMULATING
+  #define PWB_IS_CLFLUSH
+  #define MMAP_FLAG MAP_SHARED
+  // Name of persistent file mapping
+  static const char * PFILE_NAME = "/dev/shm/ponefilelf_shared";
+#else
+  #define PWB_IS_CLWB
+  #define MMAP_FLAG 0x80003/*MAP_SHARED_VALIDATE | MAP_SYNC*/
+  // Name of persistent file mapping
+  static const char * PFILE_NAME = "/mnt/pmem/ponefilelf_shared";
+#endif
+
+#ifdef PWB_IS_NOOP
+  #define PWB(addr)
+  #define PFENCE()
+  #define PSYNC()
+#elif defined(PWB_IS_CLFLUSH)
+  #define PWB(addr)              persist_func::clflush(addr)
+  #define PFENCE()               persist_func::sfence()
+  #define PSYNC()                persist_func::sfence()
+#elif defined(PWB_IS_CLWB)
+  #define PWB(addr)              persist_func::clwb(addr)
+  #define PFENCE()               persist_func::sfence()
+  #define PSYNC()                persist_func::sfence()
+#else
+  #error "Please define what PWB is."
+#endif
 
 /*
  * Differences between POneFileLF and the non-persistent OneFileLF:
@@ -78,8 +102,6 @@ static const uint64_t TX_MAX_STORES = 40*1024;
 static const uint64_t HASH_BUCKETS = 2048;
 
 // Persistent-specific configuration
-// Name of persistent file mapping
-static const char * PFILE_NAME = "/mnt/pmem/ponefilelf_shared_wcai6";
 // Start address of mapped persistent memory
 static uint8_t* PREGION_ADDR = (uint8_t*)0x7fea00000000;
 // Size of persistent memory. Part of it will be used by the redo logs
@@ -613,7 +635,7 @@ public:
             }
         }
         // mmap() memory range
-        void* got_addr = (uint8_t *)mmap(regionAddr, regionSize, (PROT_READ | PROT_WRITE), 0x80003/*MAP_SHARED_VALIDATE | MAP_SYNC*/, fd, 0);
+        void* got_addr = (uint8_t *)mmap(regionAddr, regionSize, (PROT_READ | PROT_WRITE), MMAP_FLAG, fd, 0);
         if (got_addr == MAP_FAILED) {
             perror("ERROR: mmap() is not working !!! ");
             assert(false);
