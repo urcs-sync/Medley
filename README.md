@@ -63,11 +63,25 @@ Mnemosyne handle heap files by their own and don't have the user name
 prefix. Please refer to Section [2.3](#23-different-mount-point) if
 NVM is mounted in a different path.
 
+If your machine does not have persistent memory and you are only
+interested in the transient Medley, please build this framework with
+-DSHM_SIMULATING (i.e., do `make FLAGS="-DSHM_SIMULATING"` instead of
+`make`). This will disable all instructions for persistent memory even
+on txMontage, and instead allocate memory in `/dev/shm`.
+
 You may run the script from any pwd; it always enters its directory first.
 
 To test scalability:
 
 ```bash
+# Build tdsl library
+cd ext/tdsl
+cmake ./
+make
+# Build the testing framework with all libraries
+cd ../..
+make # or make FLAGS="-DSHM_SIMULATING" if build without pmem
+# Run script to do all experiments
 ./run.sh
 ```
 

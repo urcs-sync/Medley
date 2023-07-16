@@ -10,9 +10,9 @@ THREADS=(1 4 8 12 16 20 24 32 36 40 48 62 72 80)
 TASK_LENGTH=30 # length of each workload in second
 REPEAT_NUM=3 # number of trials
 
-# Montage-backed persistent lockfree hashtable that supports transactions
+# txMontage persistent lockfree hashtable that supports transactions
 pm_ht_plain="txMontageLfHashTable<uint64_t>" 
-# Transient lockfree hashtable that supports transactions
+# Medley transient lockfree hashtable that supports transactions
 dram_ht_plain=(
     "MedleyLfHashTable<uint64_t>"
 ) 
@@ -22,9 +22,9 @@ of_ht_plain=(
     "POneFileHashTable<uint64_t>"
 ) 
 
-# Montage-backed persistent lockfree skiplist that supports transactions
+# txMontage persistent lockfree skiplist that supports transactions
 pm_sl_plain="txMontageFraserSkipList<uint64_t>" 
-# Transient lockfree skiplist that supports transactions
+# Medley transient lockfree skiplist that supports transactions
 dram_sl_plain=(
     "MedleyFraserSkipList<uint64_t>"
 )
@@ -87,7 +87,7 @@ ht_init(){
 ht_execute(){
     make clean;make -j
     ht_init
-    # 1. transient that use Montage
+    # 1. Transient Medley
     for ((i=1; i<=REPEAT_NUM; ++i))
     do
         for threads in "${THREADS[@]}"
@@ -109,7 +109,7 @@ ht_execute(){
         done
     done
 
-    # 2. Montage with epoch system
+    # 2. Persistent txMontage 
     for ((i=1; i<=REPEAT_NUM; ++i))
     do
         for threads in "${THREADS[@]}"
@@ -175,7 +175,7 @@ sl_init(){
 sl_execute(){
     make clean;make -j
     sl_init
-    # 1. transient that use Montage
+    # 1. Transient Medley
     for ((i=1; i<=REPEAT_NUM; ++i))
     do
         for threads in "${THREADS[@]}"
@@ -197,7 +197,7 @@ sl_execute(){
         done
     done
 
-    # 2. Montage with epoch system
+    # 2. Persistent txMontage
     for ((i=1; i<=REPEAT_NUM; ++i))
     do
         for threads in "${THREADS[@]}"

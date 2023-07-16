@@ -10,10 +10,9 @@ CXX = g++
 WARNING_FLAGS:=-ftrapv -Wreturn-type -W -Wall \
 -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-parameter
 
-FLAGS = -O3 -g -fpermissive $(WARNING_FLAGS) -fno-omit-frame-pointer -fPIC -faligned-new #-DSHM_SIMULATING #-DDESTROY -DMEM_CONSUME_TEST
-RALLOC_FLAGS = $(FLAGS) -DRALLOC -L.
+RALLOC_FLAGS := $(FLAGS) -O3 -g -fpermissive $(WARNING_FLAGS) -fno-omit-frame-pointer -fPIC -faligned-new -DRALLOC -L. #-DSHM_SIMULATING #-DDESTROY -DMEM_CONSUME_TEST
 
-CXXFLAGS = $(RALLOC_FLAGS) -ljemalloc 
+CXXFLAGS := $(RALLOC_FLAGS) -ljemalloc 
 
 LIBS = -pthread -lstdc++ -latomic 
 

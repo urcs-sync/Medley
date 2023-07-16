@@ -30,7 +30,6 @@ Makefile.in
 *.blg
 trans.pdf
 libtool
-Makefile
 stamp-h1
 bin/
 configure
